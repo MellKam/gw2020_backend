@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Group } from './group.schema';
 import { MongooseObjectId } from '../utils/mongoose';
-import { GW } from './gw.schema';
+import { Group } from '../group/group.schema';
+import { GW } from '../schemas/gw.schema';
 
 @Schema()
 export class Student {

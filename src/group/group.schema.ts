@@ -1,6 +1,6 @@
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { MongooseObjectId } from '../utils/mongoose';
-import { Specification } from './specification.schema';
+import { Specification } from '../schemas/specification.schema';
 
 export interface GWInfo {
 	delivery_date: string;
