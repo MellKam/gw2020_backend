@@ -37,6 +37,8 @@
 		"rxjs": "^7.2.0"
 	},
 	"devDependencies": {
+		"@commitlint/cli": "^16.2.3",
+		"@commitlint/config-conventional": "^16.2.1",
 		"@nestjs/cli": "^8.0.0",
 		"@nestjs/schematics": "^8.0.0",
 		"@nestjs/testing": "^8.0.0",
@@ -83,5 +85,10 @@
 		"commitizen": {
 			"path": "./node_modules/cz-conventional-changelog"
 		}
+	},
+	"commitlint": {
+		"extends": [
+			"@commitlint/config-conventional"
+		]
 	}
 }
