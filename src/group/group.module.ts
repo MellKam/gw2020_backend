@@ -3,7 +3,7 @@ import { GroupService } from './group.service';
 import { GroupController } from './group.controller';
 
 @Module({
-  providers: [GroupService],
-  controllers: [GroupController]
+	providers: [GroupService],
+	controllers: [GroupController],
 })
 export class GroupModule {}
