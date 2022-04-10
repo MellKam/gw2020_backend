@@ -7,7 +7,8 @@ import {
 } from 'class-validator';
 import { GwDto } from './gw.dto';
 
-export class CreateStudentDto {
+export class UpdateStudentDto {
+	@IsOptional()
 	@IsString()
 	@MinLength(8)
 	readonly full_name: string;
