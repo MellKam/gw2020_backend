@@ -3,7 +3,7 @@ import {
 	Injectable,
 	InternalServerErrorException,
 } from '@nestjs/common';
-import { Student } from './student.schema';
+import { Student } from './schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentRepository } from './student.repository';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -14,7 +14,7 @@ export class StudentService {
 
 	async create(createStudentDto: CreateStudentDto): Promise<Student> {
 		try {
-			return await this.studentRepository.create(createStudentDto);
+			return await this.studentRepository.create(createStudentDto).save();
 		} catch (error) {
 			if (error.code === 11000)
 				throw new ConflictException('Student with this name already exist');

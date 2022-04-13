@@ -15,7 +15,10 @@ async function bootstrap() {
 	);
 	useContainer(app.select(AppModule), { fallbackOnErrors: true });
 	await app.listen(process.env.PORT, () =>
-		console.log(`✅ Server started: http://localhost:${process.env.PORT}`),
+		// eslint-disable-next-line no-console
+		console.log(
+			`✅ Server started: http://${process.env.HOST}:${process.env.PORT}`,
+		),
 	);
 }
 bootstrap();

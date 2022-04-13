@@ -1,20 +1,26 @@
 import { Type } from 'class-transformer';
 import {
+	IsMongoId,
 	IsOptional,
 	IsString,
 	MinLength,
 	ValidateNested,
 } from 'class-validator';
-import { GwDto } from './gw.dto';
+import { ObjectIdType } from '../../database/mongoose.utils';
+import { UpdateGWDto } from './update-gw.dto';
 
 export class UpdateStudentDto {
 	@IsOptional()
 	@IsString()
 	@MinLength(8)
-	readonly full_name: string;
+	readonly full_name?: string;
 
 	@IsOptional()
 	@ValidateNested()
-	@Type(() => GwDto)
-	readonly gw: GwDto;
+	@Type(() => UpdateGWDto)
+	readonly gw?: UpdateGWDto;
+
+	@IsOptional()
+	@IsMongoId()
+	readonly group?: ObjectIdType;
 }

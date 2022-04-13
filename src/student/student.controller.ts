@@ -10,7 +10,7 @@ import {
 import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { Student } from './student.schema';
+import { Student } from './schemas/student.schema';
 import { StudentService } from './student.service';
 
 @Controller('student')
