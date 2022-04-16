@@ -7,17 +7,42 @@ import { Student } from './schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentRepository } from './student.repository';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { GroupRepository } from '../group/group.repository';
+import { ClientSession } from 'mongodb';
 
 @Injectable()
 export class StudentService {
-	constructor(private studentRepository: StudentRepository) {}
+	constructor(
+		private studentRepository: StudentRepository,
+		private groupRepository: GroupRepository,
+	) {}
 
-	async create(createStudentDto: CreateStudentDto): Promise<Student> {
+	async create(createStudentDto: CreateStudentDto, dbSession: ClientSession) {
 		try {
-			return await this.studentRepository.create(createStudentDto).save();
+			const group = await this.groupRepository.findOneWithSession(
+				{
+					_id: createStudentDto.group,
+				},
+				dbSession,
+			);
+			if (!group)
+				throw new ConflictException('Group with this id does not exist');
+
+			const student = await this.studentRepository.createWithSession(
+				createStudentDto,
+				dbSession,
+			);
+
+			group.students.push(student._id);
+			await group.save({ session: dbSession });
+
+			return student;
 		} catch (error) {
 			if (error.code === 11000)
 				throw new ConflictException('Student with this name already exist');
+
+			if (error instanceof ConflictException) throw error;
+
 			throw new InternalServerErrorException('Error while creating student');
 		}
 	}

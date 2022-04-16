@@ -1,4 +1,4 @@
-import { Prop, Schema as NestSchema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
 	MongoDocument,
 	ObjectIdType,
@@ -7,17 +7,17 @@ import {
 import { Group } from '../../group/schemas/group.schema';
 import { GW, GWSchema } from './gw.schema';
 
-@NestSchema()
+@Schema()
 export class Student {
 	_id: ObjectIdType;
 
 	@Prop({ type: String, required: true, unique: true })
 	full_name: string;
 
-	@Prop({ type: SchemaObjectId, ref: Group.name })
+	@Prop({ type: SchemaObjectId, ref: 'Group' })
 	group: Group | ObjectIdType;
 
-	@Prop({ type: GWSchema, default: null })
+	@Prop({ type: GWSchema })
 	gw: GW;
 }
 

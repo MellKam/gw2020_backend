@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ObjectIdType } from '../../database/mongoose.utils';
-import { CreateStudentDto } from '../dto/create-student.dto';
-import { UpdateStudentDto } from '../dto/update-student.dto';
-import { StudentController } from '../student.controller';
-import { Student } from '../schemas/student.schema';
-import { StudentService } from '../student.service';
-import { studentStub } from './stubs/student.stub';
+import { ObjectIdType } from '../../../database/mongoose.utils';
+import { CreateStudentDto } from '../../dto/create-student.dto';
+import { UpdateStudentDto } from '../../dto/update-student.dto';
+import { StudentController } from '../../student.controller';
+import { Student } from '../../schemas/student.schema';
+import { StudentService } from '../../student.service';
+import { studentStub } from '../stubs/student.stub';
 
-jest.mock('../student.service');
+jest.mock('../../student.service');
 
 describe('StudentController', () => {
 	let studentController: StudentController;

@@ -27,4 +27,5 @@ module.exports = {
 		],
 		'no-console': ['warn', { allow: ['warn', 'error'] }],
 	},
+	eslintIgnore: ['docker-compose.yml'],
 };

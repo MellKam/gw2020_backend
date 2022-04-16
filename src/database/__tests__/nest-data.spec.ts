@@ -1,5 +1,5 @@
-import { TypesObjectId } from '../mongoose.utils';
-import { parseNestData } from '../nest-data.parser';
+import { TypesObjectId } from '../utils/mongoose.utils';
+import { parseNestData } from '../../utils/nest-data.parser';
 
 const testObjectId = new TypesObjectId();
 

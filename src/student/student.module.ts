@@ -4,10 +4,15 @@ import { StudentController } from './student.controller';
 import { StudentService } from './student.service';
 import { StudentImport } from './schemas/student.schema';
 import { StudentRepository } from './student.repository';
-import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
+import { GroupModule } from '../group/group.module';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
-	imports: [MongooseModule.forFeature([StudentImport]), MongoIdPipe],
+	imports: [
+		MongooseModule.forFeature([StudentImport]),
+		GroupModule,
+		DatabaseModule,
+	],
 	controllers: [StudentController],
 	providers: [StudentService, StudentRepository],
 	exports: [StudentRepository],

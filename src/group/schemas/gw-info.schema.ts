@@ -1,6 +1,6 @@
-import { Prop, Schema as NestSchema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@NestSchema()
+@Schema()
 export class GWInfo {
 	@Prop({ type: Date, required: true })
 	delivery_date: string;

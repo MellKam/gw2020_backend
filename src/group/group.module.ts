@@ -9,5 +9,6 @@ import { GroupRepository } from './group.repository';
 	imports: [MongooseModule.forFeature([GroupImport])],
 	providers: [GroupService, GroupRepository],
 	controllers: [GroupController],
+	exports: [GroupRepository],
 })
 export class GroupModule {}

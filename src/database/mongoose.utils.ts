@@ -1,8 +1,10 @@
 import { Schema, Types, Document } from 'mongoose';
+import { ClientSession as MongodbClientSession } from 'mongodb';
 
 export const SchemaObjectId = Schema.Types.ObjectId;
 export const TypesObjectId = Types.ObjectId;
 export type ObjectIdType = Types.ObjectId;
+export type ClientSession = MongodbClientSession;
 
 export type MongoDocument<T> = T & Document;
 

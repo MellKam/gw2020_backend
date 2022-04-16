@@ -6,7 +6,7 @@ import { Group, GroupDocument } from './schemas/group.schema';
 
 @Injectable()
 export class GroupRepository extends EntityRepository<GroupDocument> {
-	constructor(@InjectModel(Group.name) groupModel: Model<GroupDocument>) {
+	constructor(@InjectModel('Group') groupModel: Model<GroupDocument>) {
 		super(groupModel);
 	}
 }

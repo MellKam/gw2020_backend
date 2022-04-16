@@ -1,0 +1,25 @@
+# Development and testing
+version: '3.8'
+
+services:
+  app:
+    container_name: 'app'
+    build:
+      context: '.'
+    ports:
+      - '${LOCAL_APP_PORT}:${CONTAINER_APP_PORT}'
+    volumes:
+      - '.:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    restart: 'unless-stopped'
+    command: sh -c 'yarn build && yarn start:dev'
+    depends_on:
+      - 'db'
+
+  db:
+    container_name: 'db'
+    image: 'mongo:5.0.7'
+    logging:
+      driver: 'none'
+    ports:
+      - '27017:27017'

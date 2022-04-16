@@ -6,7 +6,7 @@ import { Student, StudentDocument } from './schemas/student.schema';
 
 @Injectable()
 export class StudentRepository extends EntityRepository<StudentDocument> {
-	constructor(@InjectModel(Student.name) studentModel: Model<StudentDocument>) {
+	constructor(@InjectModel('Student') studentModel: Model<StudentDocument>) {
 		super(studentModel);
 	}
 }

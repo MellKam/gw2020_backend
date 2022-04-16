@@ -1,9 +1,12 @@
-import { Prop, Schema as NestSchema, SchemaFactory } from '@nestjs/mongoose';
-import { ObjectIdType, SchemaObjectId } from '../../database/mongoose.utils';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import {
+	ObjectIdType,
+	SchemaObjectId,
+} from '../../database/mongoose.utils';
 import { GWInfo } from '../../group/schemas/gw-info.schema';
 import { GWStatus, GWStatusArray } from './gw-status.enum';
 
-@NestSchema({ _id: false })
+@Schema({ _id: false })
 export class GW {
 	@Prop({ type: String, required: true })
 	topic: string;

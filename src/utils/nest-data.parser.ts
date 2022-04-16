@@ -1,4 +1,4 @@
-import { TypesObjectId } from './mongoose.utils';
+import { TypesObjectId } from '../database/mongoose.utils';
 
 export function parseNestData(data: object): object {
 	const result = {};

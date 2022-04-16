@@ -1,12 +1,12 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
-import { StudentRepository } from '../student.repository';
-import { Student } from '../schemas/student.schema';
-import { studentStub } from './stubs/student.stub';
-import { StudentModel } from './support/student.model';
+import { StudentRepository } from '../../student.repository';
+import { Student } from '../../schemas/student.schema';
+import { studentStub } from '../stubs/student.stub';
+import { StudentModel } from '../support/student.model';
 import { FilterQuery } from 'mongoose';
-import { parseNestData } from '../../database/nest-data.parser';
-import { CreateMockModel } from '../../database/__tests__/support/create-mock.model';
+import { parseNestData } from '../../../utils/nest-data.parser';
+import { CreateMockModel } from '../../../database/__tests__/support/create-mock.model';
 
 describe('StudentRepository', () => {
 	let studentRepository: StudentRepository;
