@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { PutGwInfoDto } from './dto/put-gw-info.dto';
