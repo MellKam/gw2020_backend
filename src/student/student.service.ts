@@ -1,7 +1,9 @@
+import { PutGwDto } from './dto/put-gw.dto';
+import { UpdateGwDto } from './dto/update-gw.dto';
 import {
 	ConflictException,
 	Injectable,
-	InternalServerErrorException,
+	BadRequestException,
 } from '@nestjs/common';
 import { Student } from './schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -9,6 +11,10 @@ import { StudentRepository } from './student.repository';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { GroupRepository } from '../group/group.repository';
 import { ClientSession } from 'mongodb';
+import { parseNestData } from '../utils/object-modifier';
+import { GW } from './schemas/gw.schema';
+import { MongooseValidationError } from '../database/mongoose.utils';
+import { Group } from '../group/schemas/group.schema';
 
 @Injectable()
 export class StudentService {
@@ -17,7 +23,10 @@ export class StudentService {
 		private groupRepository: GroupRepository,
 	) {}
 
-	async create(createStudentDto: CreateStudentDto, dbSession: ClientSession) {
+	async createStudent(
+		createStudentDto: CreateStudentDto,
+		dbSession: ClientSession,
+	): Promise<Student> {
 		try {
 			const group = await this.groupRepository.findOneWithSession(
 				{
@@ -41,42 +50,117 @@ export class StudentService {
 			if (error.code === 11000)
 				throw new ConflictException('Student with this name already exist');
 
-			if (error instanceof ConflictException) throw error;
-
-			throw new InternalServerErrorException('Error while creating student');
+			throw error;
 		}
 	}
 
-	async findAll(): Promise<Student[]> {
-		return this.studentRepository.find();
+	async findAllStudents(): Promise<Student[]> {
+		try {
+			return this.studentRepository.find();
+		} catch (error) {
+			throw error;
+		}
 	}
 
-	async deleteById(id: string): Promise<boolean> {
-		const isDeleted = await this.studentRepository.deleteOne({ _id: id });
+	async deleteStudentById(
+		id: string,
+		dbSession: ClientSession,
+	): Promise<Student> {
+		try {
+			const student = await this.studentRepository.findOneAndDeleteWithSession(
+				{ _id: id },
+				dbSession,
+			);
 
-		if (!isDeleted)
-			throw new ConflictException('Student with this id does not exist');
+			if (!student)
+				throw new ConflictException('Student with this id does not exist');
 
-		return isDeleted;
+			await this.groupRepository.updateOneWithSession(
+				{ _id: student.group },
+				{ $pull: { students: student._id } },
+				dbSession,
+			);
+
+			return student;
+		} catch (error) {
+			throw error;
+		}
 	}
 
-	async findById(id: string): Promise<Student> {
-		const response = await this.studentRepository.findOne({ _id: id });
+	async findStudentById(id: string): Promise<Student> {
+		try {
+			const response = await this.studentRepository.findOne({ _id: id });
+			if (!response)
+				throw new ConflictException('Student with this id does not exist');
 
-		if (!response)
-			throw new ConflictException('Student with this id does not exist');
-
-		return response;
+			return response;
+		} catch (error) {
+			throw error;
+		}
 	}
 
-	async updateById(
+	async updateGwByStudentId(id: string, updateGwDto: UpdateGwDto): Promise<GW> {
+		try {
+			const student = await this.studentRepository.findOne({ _id: id });
+
+			// cycle for update student.gw object with fields of updateGwDto
+			for (const key in updateGwDto) {
+				student.gw[key] = updateGwDto[key];
+			}
+
+			await student.save();
+			return student.gw;
+		} catch (error) {
+			if (error instanceof MongooseValidationError) {
+				throw new BadRequestException(error.message);
+			}
+			throw error;
+		}
+	}
+
+	async putGwByStudentId(id: string, putGwDto: PutGwDto): Promise<GW> {
+		try {
+			const student = await this.studentRepository.findOne({
+				_id: id,
+			});
+
+			if (!student)
+				throw new ConflictException('Student with this id does not exist');
+
+			await student.populate({
+				path: 'group',
+				select: 'gw_info._id',
+			});
+
+			const groupGwInfo = (student.group as Group).gw_info;
+
+			if (!groupGwInfo)
+				throw new ConflictException(
+					"Student's group does'nt have gw_info filed",
+				);
+
+			const studentGw: GW = {
+				gw_info: groupGwInfo._id,
+				topic: putGwDto.topic,
+			};
+
+			student.gw = studentGw;
+			await student.save();
+
+			return student.gw;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async updateStudentById(
 		id: string,
 		updateStudentDto: UpdateStudentDto,
 	): Promise<Student> {
 		try {
-			const response = await this.studentRepository.findOneAndUpdate(
+			const response = await this.studentRepository.updateOne(
 				{ _id: id },
-				updateStudentDto,
+				parseNestData(updateStudentDto),
 			);
 
 			if (!response)
@@ -86,7 +170,7 @@ export class StudentService {
 		} catch (error) {
 			if (error.code === 11000)
 				throw new ConflictException('Student with this name already exist');
-			throw new InternalServerErrorException('Error while updating student');
+			throw error;
 		}
 	}
 }

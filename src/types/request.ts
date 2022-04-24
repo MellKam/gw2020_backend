@@ -1,4 +1,6 @@
 import { Request } from 'express';
-import { ClientSession } from 'mongodb';
+import { ClientSession } from '../database/mongoose.utils';
 
-export type ReqWithMongoSession = Request & { dbSession: ClientSession };
+export interface AppReq extends Request {
+	dbSession?: ClientSession;
+}

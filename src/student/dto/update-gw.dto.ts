@@ -1,6 +1,5 @@
 import {
 	IsIn,
-	IsMongoId,
 	IsNumber,
 	IsOptional,
 	IsString,
@@ -9,9 +8,8 @@ import {
 	MinLength,
 } from 'class-validator';
 import { GWStatus, GWStatusArray } from '../schemas/gw-status.enum';
-import { ObjectIdType } from '../../database/mongoose.utils';
 
-export class UpdateGWDto {
+export class UpdateGwDto {
 	@IsOptional()
 	@IsString()
 	@MinLength(8)
@@ -27,8 +25,4 @@ export class UpdateGWDto {
 	@Min(1)
 	@Max(12)
 	readonly grade?: number;
-
-	@IsOptional()
-	@IsMongoId()
-	readonly gw_info?: ObjectIdType;
 }

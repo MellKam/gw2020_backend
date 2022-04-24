@@ -1,4 +1,4 @@
-import { TypesObjectId } from '../database/mongoose.utils';
+import { MongoObjectId } from '../database/mongoose.utils';
 
 export function parseNestData(data: object): object {
 	const result = {};
@@ -9,7 +9,7 @@ export function parseNestData(data: object): object {
 
 	function parseObject(key: string, value: any) {
 		if (typeof value === 'object') {
-			if (value instanceof TypesObjectId) {
+			if (value instanceof MongoObjectId) {
 				return (result[joinKeys([...this.prevKeys, key])] =
 					value.toHexString());
 			}
@@ -29,4 +29,10 @@ export function parseNestData(data: object): object {
 	loop(data, []);
 
 	return result;
+}
+
+export function updateObejctKeys(object: object, name: string): object {
+	return Object.fromEntries(
+		Object.entries(object).map(([key, value]) => [`${name}.${key}`, value]),
+	);
 }

@@ -9,7 +9,7 @@ import { GW, GWSchema } from './gw.schema';
 
 @Schema()
 export class Student {
-	_id: ObjectIdType;
+	_id?: ObjectIdType;
 
 	@Prop({ type: String, required: true, unique: true })
 	full_name: string;

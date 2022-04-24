@@ -5,7 +5,7 @@ import {
 	Injectable,
 } from '@nestjs/common';
 import { Observable, tap, catchError } from 'rxjs';
-import { ReqWithMongoSession } from '../../types/request';
+import { AppReq } from '../../types/request';
 import { DatabaseService } from '../database.service';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class TransactionInterceptor implements NestInterceptor {
 		context: ExecutionContext,
 		next: CallHandler,
 	): Promise<Observable<any>> {
-		const request: ReqWithMongoSession = context.switchToHttp().getRequest();
+		const request: AppReq = context.switchToHttp().getRequest();
 		const connection = this.databaseService.connection;
 
 		const session = await connection.startSession();

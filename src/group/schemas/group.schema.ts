@@ -1,16 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
 	MongoDocument,
+	ObjectIdType,
 	SchemaObjectId,
 } from '../../database/mongoose.utils';
+import { Specification } from '../../faculty/schemas/specification.schema';
 import { Student } from '../../student/schemas/student.schema';
 import { GWInfo, GWInfoSchema } from './gw-info.schema';
-// import { Specification } from '../specification/specification.schema';
 
 @Schema()
 export class Group {
-	// @Prop({ type: MongooseObjectId, ref: Specification.name })
-	// specification: Specification;
+	_id: ObjectIdType;
+
+	@Prop({ type: SchemaObjectId, ref: 'Specification', required: true })
+	specification: Specification;
+
+	@Prop({ type: Number, required: true, unique: true })
+	number: number;
 
 	@Prop({ type: String, required: true })
 	master: string;
@@ -19,7 +25,7 @@ export class Group {
 	gw_info: GWInfo;
 
 	@Prop({ type: [{ type: SchemaObjectId, ref: 'Student' }], default: [] })
-	students: Student[];
+	students: Student[] | ObjectIdType[];
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);

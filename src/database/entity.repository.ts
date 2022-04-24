@@ -1,6 +1,5 @@
 import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
 import { DocReset } from './mongoose.utils';
-import { parseNestData } from '../utils/nest-data.parser';
 import { ClientSession } from 'mongodb';
 
 export abstract class EntityRepository<T extends Document> {
@@ -50,18 +49,39 @@ export abstract class EntityRepository<T extends Document> {
 		return await this.entityModel.findOne(filter, {}, { session });
 	}
 
+	async updateOne(
+		filter: FilterQuery<T>,
+		updateData: UpdateQuery<unknown>,
+	): Promise<T> {
+		return this.entityModel.findOneAndUpdate(filter, updateData, {
+			new: true,
+			projection: DocReset,
+			runValidators: true,
+		});
+	}
+
+	async updateOneWithSession(
+		filter: FilterQuery<T>,
+		updateData: UpdateQuery<unknown>,
+		session: ClientSession,
+	): Promise<T> {
+		return this.entityModel.findOneAndUpdate(filter, updateData, {
+			new: true,
+			projection: DocReset,
+			session,
+		});
+	}
+
 	async findOneAndUpdate(
 		filter: FilterQuery<T>,
 		updateData: UpdateQuery<unknown>,
 	): Promise<T> {
-		return await this.entityModel.findOneAndUpdate(
-			filter,
-			parseNestData(updateData),
-			{
-				new: true,
-				projection: DocReset,
-			},
-		);
+		return await this.entityModel.findOneAndUpdate(filter, updateData, {
+			new: true,
+			projection: DocReset,
+			runValidators: true,
+			context: 'query',
+		});
 	}
 
 	async findOneAndUpdateWithSession(
@@ -69,15 +89,11 @@ export abstract class EntityRepository<T extends Document> {
 		updateData: UpdateQuery<unknown>,
 		session: ClientSession,
 	): Promise<T> {
-		return await this.entityModel.findOneAndUpdate(
-			filter,
-			parseNestData(updateData),
-			{
-				new: true,
-				projection: DocReset,
-				session,
-			},
-		);
+		return await this.entityModel.findOneAndUpdate(filter, updateData, {
+			new: true,
+			projection: DocReset,
+			session,
+		});
 	}
 
 	async deleteOne(filter: FilterQuery<T>): Promise<boolean> {
@@ -93,5 +109,18 @@ export abstract class EntityRepository<T extends Document> {
 			session,
 		});
 		return deleteResult.deletedCount >= 1;
+	}
+
+	async findOneAndDelete(filter: FilterQuery<T>): Promise<T> {
+		return this.entityModel.findOneAndDelete(filter);
+	}
+
+	async findOneAndDeleteWithSession(
+		filter: FilterQuery<T>,
+		session: ClientSession,
+	): Promise<T> {
+		return this.entityModel.findOneAndDelete(filter, {
+			session,
+		});
 	}
 }

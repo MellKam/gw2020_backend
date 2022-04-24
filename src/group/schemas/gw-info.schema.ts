@@ -1,7 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ObjectIdType } from '../../database/mongoose.utils';
 
 @Schema()
 export class GWInfo {
+	_id?: ObjectIdType;
+
 	@Prop({ type: Date, required: true })
 	delivery_date: string;
 
