@@ -6,6 +6,7 @@ declare global {
 			NODE_ENV: nodeEnv;
 			LOCAL_APP_PORT: string;
 			CONTAINER_APP_PORT?: string;
+			WEB_APP_URL?: string;
 		}
 	}
 }

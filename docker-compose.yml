@@ -12,7 +12,7 @@ services:
       - '.:/usr/src/app'
       - '/usr/src/app/node_modules'
     restart: 'unless-stopped'
-    command: sh -c 'yarn build && yarn start:dev'
+    command: yarn test:watch
     depends_on:
       - 'db'
 
