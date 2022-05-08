@@ -14,7 +14,7 @@ module.exports = {
 		node: true,
 		jest: true,
 	},
-	ignorePatterns: ['.eslintrc.js'],
+	ignorePatterns: ['.eslintrc.js', 'mongo-init.js'],
 	rules: {
 		'prettier/prettier': 'warn',
 		'@typescript-eslint/interface-name-prefix': 'off',

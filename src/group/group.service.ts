@@ -23,7 +23,7 @@ export class GroupService {
 
 	async getGroupById(id: string): Promise<Group> {
 		try {
-			const group = await this.groupRepository.findOne({ _id: id });
+			const group = await this.groupRepository.findOneAndExec({ _id: id });
 			if (!group)
 				throw new ConflictException('Group with this id does not exist');
 
@@ -38,7 +38,9 @@ export class GroupService {
 		putGwInfoDto: PutGwInfoDto,
 	): Promise<GWInfo> {
 		try {
-			const group = await this.groupRepository.findOne({ _id: id });
+			const group = await this.groupRepository.findOneAndExec({
+				_id: id,
+			});
 
 			if (!group)
 				throw new ConflictException('Group with this id does not exist');

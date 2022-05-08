@@ -10,16 +10,12 @@ import {
 	Patch,
 	Post,
 	Put,
-	UseInterceptors,
 } from '@nestjs/common';
-import { DbSession } from '../database/decorators/db-session.decorator';
 import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Student } from './schemas/student.schema';
 import { StudentService } from './student.service';
-import { ClientSession } from '../database/mongoose.utils';
-import { TransactionInterceptor } from '../database/interceptors/transaction.interceptor';
 
 @Controller('student')
 export class StudentController {
@@ -30,12 +26,10 @@ export class StudentController {
 	 * @method POST
 	 */
 	@Post()
-	@UseInterceptors(TransactionInterceptor)
 	async createStudent(
 		@Body() createStudentDto: CreateStudentDto,
-		@DbSession() dbSession: ClientSession,
 	): Promise<Student> {
-		return this.studentService.createStudent(createStudentDto, dbSession);
+		return this.studentService.createStudent(createStudentDto);
 	}
 
 	/**
@@ -45,6 +39,11 @@ export class StudentController {
 	@Get()
 	async getAllStudents(): Promise<Student[]> {
 		return this.studentService.findAllStudents();
+	}
+
+	@Get('gw')
+	async getAllGws() {
+		return this.studentService.findAllGws();
 	}
 
 	/**
@@ -72,13 +71,11 @@ export class StudentController {
 	 * @link /student/:id
 	 * @method DELETE
 	 */
-	@Delete('/:id')
-	@UseInterceptors(TransactionInterceptor)
+	@Delete(':id')
 	async deleteStudentById(
 		@Param('id', MongoIdPipe) id: string,
-		@DbSession() dbSession: ClientSession,
 	): Promise<Student> {
-		return this.studentService.deleteStudentById(id, dbSession);
+		return this.studentService.deleteStudentById(id);
 	}
 
 	/**

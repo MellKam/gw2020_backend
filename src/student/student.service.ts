@@ -10,7 +10,6 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentRepository } from './student.repository';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { GroupRepository } from '../group/group.repository';
-import { ClientSession } from 'mongodb';
 import { parseNestData } from '../utils/object-modifier';
 import { GW } from './schemas/gw.schema';
 import { MongooseValidationError } from '../database/mongoose.utils';
@@ -23,27 +22,20 @@ export class StudentService {
 		private groupRepository: GroupRepository,
 	) {}
 
-	async createStudent(
-		createStudentDto: CreateStudentDto,
-		dbSession: ClientSession,
-	): Promise<Student> {
+	async createStudent(createStudentDto: CreateStudentDto): Promise<Student> {
 		try {
-			const group = await this.groupRepository.findOneWithSession(
-				{
-					_id: createStudentDto.group,
-				},
-				dbSession,
-			);
+			const group = await this.groupRepository.findOneAndExec({
+				_id: createStudentDto.group,
+			});
 			if (!group)
 				throw new ConflictException('Group with this id does not exist');
 
-			const student = await this.studentRepository.createWithSession(
-				createStudentDto,
-				dbSession,
-			);
+			const student = await this.studentRepository
+				.create(createStudentDto)
+				.save();
 
 			group.students.push(student._id);
-			await group.save({ session: dbSession });
+			await group.save();
 
 			return student;
 		} catch (error) {
@@ -62,23 +54,18 @@ export class StudentService {
 		}
 	}
 
-	async deleteStudentById(
-		id: string,
-		dbSession: ClientSession,
-	): Promise<Student> {
+	async deleteStudentById(id: string): Promise<Student> {
 		try {
-			const student = await this.studentRepository.findOneAndDeleteWithSession(
-				{ _id: id },
-				dbSession,
-			);
+			const student = await this.studentRepository.findOneAndDelete({
+				_id: id,
+			});
 
 			if (!student)
 				throw new ConflictException('Student with this id does not exist');
 
-			await this.groupRepository.updateOneWithSession(
+			await this.groupRepository.updateOne(
 				{ _id: student.group },
 				{ $pull: { students: student._id } },
-				dbSession,
 			);
 
 			return student;
@@ -89,7 +76,7 @@ export class StudentService {
 
 	async findStudentById(id: string): Promise<Student> {
 		try {
-			const response = await this.studentRepository.findOne({ _id: id });
+			const response = await this.studentRepository.findOneAndExec({ _id: id });
 			if (!response)
 				throw new ConflictException('Student with this id does not exist');
 
@@ -101,7 +88,7 @@ export class StudentService {
 
 	async updateGwByStudentId(id: string, updateGwDto: UpdateGwDto): Promise<GW> {
 		try {
-			const student = await this.studentRepository.findOne({ _id: id });
+			const student = await this.studentRepository.findOneAndExec({ _id: id });
 
 			// cycle for update student.gw object with fields of updateGwDto
 			for (const key in updateGwDto) {
@@ -120,7 +107,7 @@ export class StudentService {
 
 	async putGwByStudentId(id: string, putGwDto: PutGwDto): Promise<GW> {
 		try {
-			const student = await this.studentRepository.findOne({
+			const student = await this.studentRepository.findOneAndExec({
 				_id: id,
 			});
 
@@ -158,7 +145,7 @@ export class StudentService {
 		updateStudentDto: UpdateStudentDto,
 	): Promise<Student> {
 		try {
-			const response = await this.studentRepository.updateOne(
+			const response = await this.studentRepository.findOneAndUpdate(
 				{ _id: id },
 				parseNestData(updateStudentDto),
 			);
@@ -170,6 +157,17 @@ export class StudentService {
 		} catch (error) {
 			if (error.code === 11000)
 				throw new ConflictException('Student with this name already exist');
+			throw error;
+		}
+	}
+
+	async findAllGws() {
+		try {
+			const gws = await this.studentRepository.find({
+				gw: { $exists: true },
+			});
+			return gws;
+		} catch (error) {
 			throw error;
 		}
 	}

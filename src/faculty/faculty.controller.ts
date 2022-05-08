@@ -1,8 +1,5 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ObjectIdType } from '../database/mongoose.utils';
-import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CreateFacultyDto } from './dto/create-faculty.dto';
-import { CreateSpecificationDto } from './dto/create-specification.dto';
 import { FacultyService } from './faculty.service';
 
 @Controller('faculty')
@@ -14,26 +11,22 @@ export class FacultyController {
 		return this.facultyService.getAllFaculties();
 	}
 
-	@Get(':id')
-	async getFacultyById(@Param('id', MongoIdPipe) id: string) {
-		return this.facultyService.getFacultyById(id);
-	}
-
-	@Get(':id/specification')
-	async getSpecificationsByFacultyId(@Param('id', MongoIdPipe) id: string) {
-		return this.facultyService.getSpecificationsByFacultyId(id);
+	@Get(':direction_name')
+	async getFacultyById(@Param('direction_name') directionName: string) {
+		return this.facultyService.getFacultyByDirectionName(directionName);
 	}
 
 	@Post()
-	async createFaculty(@Body() createFacultyDto: CreateFacultyDto) {
-		return this.facultyService.createFaculty(createFacultyDto);
+	async createFaculty(@Body() bodyDto: CreateFacultyDto) {
+		return this.facultyService.createFaculty(bodyDto);
 	}
 
-	@Post(':id/specification')
-	async addSpecification(
-		@Param('id', MongoIdPipe) id: ObjectIdType,
-		@Body() createSpecificationDto: CreateSpecificationDto,
+	@Delete(':direction_name')
+	async deleteFacultyByDirectionName(
+		@Param('direction_name') directionName: string,
 	) {
-		return this.facultyService.addSpecification(id, createSpecificationDto);
+		return this.facultyService.deleteFacultyByDirectionName(directionName);
 	}
+
+	// @Get(':direction_name/specification/:name')
 }

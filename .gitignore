@@ -4,7 +4,7 @@
 
 # Environment files
 .env.development
-.dev.env
+.env.development.local
 
 # Logs
 logs

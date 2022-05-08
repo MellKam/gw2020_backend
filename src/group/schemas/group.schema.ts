@@ -4,7 +4,7 @@ import {
 	ObjectIdType,
 	SchemaObjectId,
 } from '../../database/mongoose.utils';
-import { Specification } from '../../faculty/schemas/specification.schema';
+import { Specification } from '../../specification/specification.schema';
 import { Student } from '../../student/schemas/student.schema';
 import { GWInfo, GWInfoSchema } from './gw-info.schema';
 

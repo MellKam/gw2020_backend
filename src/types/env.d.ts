@@ -7,6 +7,7 @@ declare global {
 			LOCAL_APP_PORT: string;
 			CONTAINER_APP_PORT?: string;
 			WEB_APP_URL?: string;
+			IS_LOCAL?: string;
 		}
 	}
 }

@@ -1,5 +1,4 @@
 import { IsDefined, IsMongoId, IsString, MinLength } from 'class-validator';
-import { ObjectIdType } from '../../database/mongoose.utils';
 
 export class CreateStudentDto {
 	@IsDefined()
@@ -9,5 +8,5 @@ export class CreateStudentDto {
 
 	@IsDefined()
 	@IsMongoId()
-	readonly group: ObjectIdType;
+	readonly group: string;
 }
