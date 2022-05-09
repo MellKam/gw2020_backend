@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
 import { CreateGroupDto } from './dto/create-group.dto';
+import { GetGroupsQueryDto } from './dto/get-groups.query.dto';
 import { PutGwInfoDto } from './dto/put-gw-info.dto';
 import { GroupService } from './group.service';
 import { Group } from './schemas/group.schema';
@@ -15,8 +16,10 @@ export class GroupController {
 	}
 
 	@Get()
-	async getAllGroups(): Promise<Group[]> {
-		return this.groupService.getAllGroups();
+	async getAllGroups(
+		@Query() { specificationId }: GetGroupsQueryDto,
+	): Promise<Group[]> {
+		return this.groupService.getAllGroups(specificationId);
 	}
 
 	@Get(':id')
