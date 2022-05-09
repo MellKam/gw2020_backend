@@ -5,14 +5,25 @@ import { GroupRepository } from './group.repository';
 import { Group, GroupDocument } from './schemas/group.schema';
 import { GWInfo } from './schemas/gw-info.schema';
 import { FilterQuery } from 'mongoose';
+import { FacultyRepository } from '../faculty/faculty.repository';
 
 @Injectable()
 export class GroupService {
-	constructor(private groupRepository: GroupRepository) {}
+	constructor(
+		private readonly groupRepository: GroupRepository,
+		private readonly facultyRepository: FacultyRepository,
+	) {}
 
-	async create(createGroupDto: CreateGroupDto): Promise<Group> {
+	async create(dto: CreateGroupDto): Promise<Group> {
 		try {
-			return await this.groupRepository.createAndSave(createGroupDto);
+			const group = await this.groupRepository.createAndSave(dto);
+
+			await this.facultyRepository.updateOne(
+				{ specifications: { $elemMatch: { _id: dto.specification } } },
+				{ $inc: { 'specifications.$.groupsNumber': 1 } },
+			);
+
+			return group;
 		} catch (error) {
 			throw error;
 		}
