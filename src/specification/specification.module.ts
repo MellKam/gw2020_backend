@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { DatabaseModule } from '../database/database.module';
 import { FacultyModule } from '../faculty/faculty.module';
 import { SpecificationController } from './specification.controller';
-import { SpecificationRepository } from './specification.repository';
-import { SpecificationImport } from './specification.schema';
 import { SpecificationService } from './specification.service';
 
 @Module({
-	imports: [MongooseModule.forFeature([SpecificationImport]), FacultyModule],
+	imports: [FacultyModule, DatabaseModule],
 	controllers: [SpecificationController],
-	providers: [SpecificationService, SpecificationRepository],
+	providers: [SpecificationService],
 })
 export class SpecificationModule {}

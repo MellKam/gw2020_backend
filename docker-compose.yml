@@ -7,6 +7,10 @@ services:
       context: '.'
     ports:
       - '${LOCAL_APP_PORT}:${CONTAINER_APP_PORT}'
+    environment:
+      - MONGOOSE_URI=mongodb://db/gw2022
+      - APP_PORT=${LOCAL_APP_PORT}
+      - WEB_APP_URL=${WEB_APP_URL}
     volumes:
       - '.:/usr/src/app'
       - '/usr/src/app/node_modules'

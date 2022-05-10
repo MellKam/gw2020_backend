@@ -1,11 +1,15 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { DatabaseService } from '../database/database.service';
 import { CreateFacultyDto } from './dto/create-faculty.dto';
 import { FacultyRepository } from './faculty.repository';
 import { Faculty } from './faculty.schema';
 
 @Injectable()
 export class FacultyService {
-	constructor(private facultyRepository: FacultyRepository) {}
+	constructor(
+		private readonly facultyRepository: FacultyRepository,
+		private readonly databaseService: DatabaseService,
+	) {}
 
 	async getAllFaculties(): Promise<Faculty[]> {
 		try {
@@ -37,11 +41,24 @@ export class FacultyService {
 		}
 	}
 
-	async deleteFacultyByDirectionName(directionName: string): Promise<boolean> {
+	async deleteFacultyByDirectionName(directionName: string): Promise<Faculty> {
 		try {
-			return this.facultyRepository.deleteOne({
+			const faculty = await this.facultyRepository.findOneAndDelete({
 				direction_name: directionName,
 			});
+
+			if (!faculty)
+				throw new ConflictException(
+					'Faculty with this direction_name does not exist',
+				);
+
+			if (faculty.specifications.length) {
+				await this.databaseService.deleteRelatedToFaculty(
+					faculty.specifications,
+				);
+			}
+
+			return faculty;
 		} catch (error) {
 			throw error;
 		}

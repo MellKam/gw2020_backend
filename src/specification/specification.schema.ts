@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { MongoDocument } from '../database/mongoose.utils';
+import { ObjectId } from 'mongodb';
 
 @Schema()
 export class Specification {
+	_id: ObjectId;
+
 	@Prop({ type: String, required: true })
 	name: string;
 
@@ -11,8 +13,3 @@ export class Specification {
 }
 
 export const SpecificationSchema = SchemaFactory.createForClass(Specification);
-export type SpecificationDocument = MongoDocument<Specification>;
-export const SpecificationImport = {
-	name: 'Specification',
-	schema: SpecificationSchema,
-};

@@ -1,15 +1,16 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { DatabaseService } from '../database/database.service';
 import { FacultyRepository } from '../faculty/faculty.repository';
 import { CreateSpecificationDto } from './dto/create-specification.dto';
 import { GetSpecificationResponseDto } from './dto/get-specification.response.dto';
-import { SpecificationRepository } from './specification.repository';
 import { Specification } from './specification.schema';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class SpecificationService {
 	constructor(
-		private specificationRepository: SpecificationRepository,
-		private facultyRepository: FacultyRepository,
+		private readonly facultyRepository: FacultyRepository,
+		private readonly databaseService: DatabaseService,
 	) {}
 
 	async getSpecificationById(id: string): Promise<GetSpecificationResponseDto> {
@@ -18,7 +19,7 @@ export class SpecificationService {
 				.findOne({
 					specifications: { $elemMatch: { _id: id } },
 				})
-				.select({ specifications: { $elemMatch: { _id: id } } })
+				.select('specifications.$')
 				.exec();
 
 			if (!faculty)
@@ -39,9 +40,11 @@ export class SpecificationService {
 		dto: CreateSpecificationDto,
 	): Promise<Specification> {
 		try {
-			const specification = this.specificationRepository.create({
+			const specification: Specification = {
+				_id: new ObjectId(),
 				name: dto.name,
-			});
+				groupsNumber: 0,
+			};
 
 			await this.facultyRepository.updateOne(
 				{
@@ -66,6 +69,8 @@ export class SpecificationService {
 					$pull: { specifications: { _id: id } },
 				},
 			);
+
+			await this.databaseService.deleteRelatedToSpecification(id);
 
 			return !!result.modifiedCount;
 		} catch (error) {

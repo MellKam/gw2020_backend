@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Post,
+	Put,
+	Query,
+} from '@nestjs/common';
 import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { GetGroupsQueryDto } from './dto/get-groups.query.dto';
@@ -33,5 +42,10 @@ export class GroupController {
 		@Body() putGwInfoDto: PutGwInfoDto,
 	): Promise<PutGwInfoDto> {
 		return this.groupService.putGwInfoByGroupId(id, putGwInfoDto);
+	}
+
+	@Delete(':id')
+	async deleteGroupById(@Param('id', MongoIdPipe) id: string) {
+		return this.groupService.deleteGroupById(id);
 	}
 }

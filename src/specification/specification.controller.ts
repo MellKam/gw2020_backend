@@ -16,14 +16,6 @@ export class SpecificationController {
 		return this.specificationService.getSpecificationById(id);
 	}
 
-	// @Get(':name')
-	// async getSpecificationByName(
-	// 	@Param('name') specificationName: string,
-	// 	@Query('facultyDirectionName') facultyDirectionName?: string,
-	// ) {
-	// 	return this.getSpecificationByName(specificationName, facultyDirectionName);
-	// }
-
 	@Post()
 	async createSpecification(
 		@Body() dto: CreateSpecificationDto,

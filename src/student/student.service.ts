@@ -5,7 +5,7 @@ import {
 	Injectable,
 	BadRequestException,
 } from '@nestjs/common';
-import { Student } from './schemas/student.schema';
+import { IStudentDocument, Student } from './schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { StudentRepository } from './student.repository';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -107,9 +107,10 @@ export class StudentService {
 
 	async putGwByStudentId(id: string, putGwDto: PutGwDto): Promise<GW> {
 		try {
-			const student = await this.studentRepository.findOneAndExec({
-				_id: id,
-			});
+			const student: IStudentDocument =
+				await this.studentRepository.findOneAndExec({
+					_id: id,
+				});
 
 			if (!student)
 				throw new ConflictException('Student with this id does not exist');

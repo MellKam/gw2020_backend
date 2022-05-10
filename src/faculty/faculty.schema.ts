@@ -1,11 +1,13 @@
 import { MongoDocument } from '../database/mongoose.utils';
 import { Schema } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import {
 	Specification,
 	SpecificationSchema,
 } from '../specification/specification.schema';
 
 export interface Faculty {
+	_id?: ObjectId;
 	direction_name: string;
 	specifications: Specification[];
 }

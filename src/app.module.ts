@@ -9,9 +9,7 @@ import { SpecificationModule } from './specification/specification.module';
 @Module({
 	imports: [
 		ConfigModule.forRoot({
-			envFilePath: `.env.${
-				process.env.NODE_ENV + (process.env.IS_LOCAL === 'true' ? '.local' : '')
-			}`,
+			envFilePath: `.env.${process.env.NODE_ENV}`,
 			isGlobal: true,
 		}),
 		DatabaseModule,

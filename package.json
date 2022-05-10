@@ -10,8 +10,8 @@
 		"build": "nest build",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"start": "nest start",
-		"start:dev": "cross-env NODE_ENV=development IS_LOCAL=false nest start --watch",
-		"start:dev-local": "cross-env NODE_ENV=development IS_LOCAL=true nest start --watch",
+		"start:dev": "cross-env NODE_ENV=development nest start --watch",
+		"start:dev-local": "cross-env NODE_ENV=development nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "cross-env NODE_ENV=production node dist/main",
 		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -22,8 +22,7 @@
 		"test:e2e": "jest --config ./jest-e2e.config.json",
 		"prepare": "npx husky install",
 		"commit": "cz",
-		"docker:test": "docker-compose --env-file .env.test up",
-		"docker:dev-local": "docker-compose --env-file .env.development.local up"
+		"docker:dev": "docker-compose --env-file .env.development.local up"
 	},
 	"dependencies": {
 		"@nestjs/common": "^8.0.0",

@@ -5,26 +5,27 @@ import { GroupRepository } from './group.repository';
 import { Group, GroupDocument } from './schemas/group.schema';
 import { GWInfo } from './schemas/gw-info.schema';
 import { FilterQuery } from 'mongoose';
-import { FacultyRepository } from '../faculty/faculty.repository';
+import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class GroupService {
 	constructor(
 		private readonly groupRepository: GroupRepository,
-		private readonly facultyRepository: FacultyRepository,
+		private readonly databaseService: DatabaseService,
 	) {}
 
 	async create(dto: CreateGroupDto): Promise<Group> {
 		try {
 			const group = await this.groupRepository.createAndSave(dto);
 
-			await this.facultyRepository.updateOne(
-				{ specifications: { $elemMatch: { _id: dto.specification } } },
-				{ $inc: { 'specifications.$.groupsNumber': 1 } },
+			await this.databaseService.incrementSpecificationGroupsNumber(
+				group.specification,
 			);
 
 			return group;
 		} catch (error) {
+			if (error.code === 11000)
+				throw new ConflictException('Group with this number already exist');
 			throw error;
 		}
 	}
@@ -71,6 +72,27 @@ export class GroupService {
 			await group.save();
 
 			return group.gw_info;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	async deleteGroupById(id: string): Promise<Group> {
+		try {
+			const group = await this.groupRepository.findOneAndDelete({ _id: id });
+
+			if (!group)
+				throw new ConflictException('Group with this id does not exist');
+
+			await this.databaseService.decrementSpecificationGroupsNumber(
+				group.specification,
+			);
+
+			if (group.students.length) {
+				await this.databaseService.deleteStudetsByIds(group.students);
+			}
+
+			return group;
 		} catch (error) {
 			throw error;
 		}

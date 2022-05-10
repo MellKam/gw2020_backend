@@ -67,4 +67,9 @@ export abstract class EntityRepository<T extends Document> {
 	async findOneAndDelete(filter: FilterQuery<T>): Promise<T> {
 		return this.entityModel.findOneAndDelete(filter);
 	}
+
+	async deleteMany(filter: FilterQuery<T>): Promise<boolean> {
+		const deleteResult = await this.entityModel.deleteMany(filter);
+		return deleteResult.deletedCount >= 1;
+	}
 }
