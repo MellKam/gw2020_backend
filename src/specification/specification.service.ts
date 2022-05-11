@@ -19,7 +19,7 @@ export class SpecificationService {
 				.findOne({
 					specifications: { $elemMatch: { _id: id } },
 				})
-				.select('specifications.$')
+				.select('specifications.$ direction_name')
 				.exec();
 
 			if (!faculty)
@@ -29,7 +29,7 @@ export class SpecificationService {
 
 			return {
 				specification: faculty.specifications[0],
-				facultyId: faculty._id,
+				facultyDirectionName: faculty.direction_name,
 			} as GetSpecificationResponseDto;
 		} catch (error) {
 			throw error;

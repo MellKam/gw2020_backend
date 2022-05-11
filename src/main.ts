@@ -11,7 +11,7 @@ async function bootstrap() {
 			whitelist: true,
 			forbidNonWhitelisted: true,
 			disableErrorMessages: false,
-			// transform: true,
+			transform: true,
 		}),
 	);
 	app.enableCors({ origin: process.env.WEB_APP_URL, credentials: true });

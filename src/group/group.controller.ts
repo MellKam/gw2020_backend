@@ -4,16 +4,18 @@ import {
 	Delete,
 	Get,
 	Param,
+	ParseIntPipe,
 	Post,
 	Put,
 	Query,
 } from '@nestjs/common';
 import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
 import { CreateGroupDto } from './dto/create-group.dto';
+import { GetGroupQueryDto } from './dto/get-group.query.dto';
 import { GetGroupsQueryDto } from './dto/get-groups.query.dto';
 import { PutGwInfoDto } from './dto/put-gw-info.dto';
 import { GroupService } from './group.service';
-import { Group } from './schemas/group.schema';
+import { Group, GroupDocument } from './schemas/group.schema';
 
 @Controller('group')
 export class GroupController {
@@ -31,9 +33,12 @@ export class GroupController {
 		return this.groupService.getAllGroups(specificationId);
 	}
 
-	@Get(':id')
-	async getGroupById(@Param('id', MongoIdPipe) id: string): Promise<Group> {
-		return this.groupService.getGroupById(id);
+	@Get(':number')
+	async getGroupByNumber(
+		@Param('number', ParseIntPipe) number: number,
+		@Query() queryParams: GetGroupQueryDto,
+	): Promise<GroupDocument> {
+		return this.groupService.getGroupByNumber(number, queryParams);
 	}
 
 	@Put(':id/gw_info')

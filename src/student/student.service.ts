@@ -14,6 +14,7 @@ import { parseNestData } from '../utils/object-modifier';
 import { GW } from './schemas/gw.schema';
 import { MongooseValidationError } from '../database/mongoose.utils';
 import { Group } from '../group/schemas/group.schema';
+import { GetStudentQueryDto } from './dto/get-student.query.dto';
 
 @Injectable()
 export class StudentService {
@@ -74,11 +75,22 @@ export class StudentService {
 		}
 	}
 
-	async findStudentById(id: string): Promise<Student> {
+	async findStudentByFullName(
+		fullName: string,
+		options: GetStudentQueryDto,
+	): Promise<Student> {
 		try {
-			const response = await this.studentRepository.findOneAndExec({ _id: id });
+			const query = this.studentRepository.findOne({
+				full_name: fullName,
+			});
+
+			if (options.populateGroup) query.populate('group');
+
+			const response = await query.exec();
 			if (!response)
-				throw new ConflictException('Student with this id does not exist');
+				throw new ConflictException(
+					'Student with this full_name does not exist',
+				);
 
 			return response;
 		} catch (error) {
@@ -107,18 +119,18 @@ export class StudentService {
 
 	async putGwByStudentId(id: string, putGwDto: PutGwDto): Promise<GW> {
 		try {
-			const student: IStudentDocument =
-				await this.studentRepository.findOneAndExec({
+			const student: IStudentDocument = await this.studentRepository
+				.findOne({
 					_id: id,
-				});
+				})
+				.populate({
+					path: 'group',
+					select: 'gw_info._id',
+				})
+				.exec();
 
 			if (!student)
 				throw new ConflictException('Student with this id does not exist');
-
-			await student.populate({
-				path: 'group',
-				select: 'gw_info._id',
-			});
 
 			const groupGwInfo = (student.group as Group).gw_info;
 

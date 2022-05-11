@@ -10,12 +10,14 @@ import {
 	Patch,
 	Post,
 	Put,
+	Query,
 } from '@nestjs/common';
 import { MongoIdPipe } from '../database/pipes/mongo-id.pipe';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { Student } from './schemas/student.schema';
 import { StudentService } from './student.service';
+import { GetStudentQueryDto } from './dto/get-student.query.dto';
 
 @Controller('student')
 export class StudentController {
@@ -47,12 +49,15 @@ export class StudentController {
 	}
 
 	/**
-	 * @link /student/:id
+	 * @link /student/:full_name
 	 * @method GET
 	 */
-	@Get(':id')
-	async getStudentById(@Param('id', MongoIdPipe) id: string): Promise<Student> {
-		return this.studentService.findStudentById(id);
+	@Get(':full_name')
+	async getStudentByFullName(
+		@Param('full_name') fullName: string,
+		@Query() queryParams: GetStudentQueryDto,
+	): Promise<Student> {
+		return this.studentService.findStudentByFullName(fullName, queryParams);
 	}
 
 	/**

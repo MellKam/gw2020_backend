@@ -6,6 +6,7 @@ import { Group, GroupDocument } from './schemas/group.schema';
 import { GWInfo } from './schemas/gw-info.schema';
 import { FilterQuery } from 'mongoose';
 import { DatabaseService } from '../database/database.service';
+import { GetGroupQueryDto } from './dto/get-group.query.dto';
 
 @Injectable()
 export class GroupService {
@@ -44,9 +45,14 @@ export class GroupService {
 		}
 	}
 
-	async getGroupById(id: string): Promise<Group> {
+	async getGroupByNumber(number: number, options: GetGroupQueryDto) {
 		try {
-			const group = await this.groupRepository.findOneAndExec({ _id: id });
+			const query = this.groupRepository.findOne({ number });
+
+			if (options.populateStudents) query.populate('students');
+
+			const group = await query.exec();
+
 			if (!group)
 				throw new ConflictException('Group with this id does not exist');
 
