@@ -15,6 +15,7 @@ import { GW } from './schemas/gw.schema';
 import { MongooseValidationError } from '../database/mongoose.utils';
 import { Group } from '../group/schemas/group.schema';
 import { GetStudentQueryDto } from './dto/get-student.query.dto';
+import { GWStatus } from './schemas/gw-status.enum';
 
 @Injectable()
 export class StudentService {
@@ -105,6 +106,11 @@ export class StudentService {
 			// cycle for update student.gw object with fields of updateGwDto
 			for (const key in updateGwDto) {
 				student.gw[key] = updateGwDto[key];
+			}
+
+			// if status not defended and grade exist -> unset grade
+			if (student.gw.status !== GWStatus.DEFENDED && student.gw.grade) {
+				student.gw.grade = undefined;
 			}
 
 			await student.save();
