@@ -58,7 +58,7 @@ export class DatabaseService {
 
 		groups.forEach((group) => {
 			if (group.students.length) {
-				studentIds.push(...studentIds);
+				studentIds.push(...group.students);
 			}
 			groupIds.push(group._id);
 		});
