@@ -75,5 +75,8 @@
 		"extends": [
 			"@commitlint/config-conventional"
 		]
+	},
+	"engines": {
+		"node": "16.13.1"
 	}
 }
